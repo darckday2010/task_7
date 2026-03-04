@@ -1,0 +1,14 @@
+# Зависимости
+node_modules/
+
+# Папки сборки (на будущее, если решишь сбилдить Vite)
+dist/
+dist-ssr/
+
+# Логи ошибок
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Системные файлы macOS (чтобы не мусорить, если ты на Маке)
+.DS_Store

@@ -1,0 +1,515 @@
+/* Подключаем переменные для удобства поддержки кода */
+:root {
+	--color-primary: #f37021; /* Примерный оранжевый из макета, уточни пипеткой в Фигме */
+	--color-text-main: #333333;
+	--color-text-muted: #888888;
+	--color-bg-light: #f9f9f9;
+	--color-white: #ffffff;
+
+	--font-main: "Roboto", sans-serif;
+	--transition: all 0.3s ease;
+}
+
+/* Глобальный сброс стилей (Reset) */
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: var(--font-main);
+	font-size: 18px;
+	line-height: 1.2; /* 120% из макета */
+	color: var(--color-text-main);
+	background-color: var(--color-white);
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+	transition: var(--transition);
+}
+
+ul {
+	list-style: none;
+}
+
+/* Контейнер для ограничения ширины контента */
+.container {
+	max-width: 1440px; /* Максимальная ширина из макета */
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+/* --- HEADER --- */
+.header {
+	padding: 20px 0;
+	/* border-bottom: 1px solid #eaeaea; <-- УДАЛИ ЭТУ СТРОКУ */
+
+	/* ДОБАВЬ ЭТИ ДВЕ СТРОКИ, чтобы хедер всегда был поверх выпадающего меню: */
+	position: relative;
+	z-index: 100;
+	background-color: var(--color-white);
+}
+
+.header__inner {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.logo {
+	position: relative; /* Чтобы сработал z-index */
+	z-index: 100; /* Должен быть выше, чем z-index: 99 у мобильного меню */
+}
+
+.logo img {
+	height: 40px; /* Это у тебя уже есть */
+	display: block; /* На всякий случай, чтобы картинка вела себя предсказуемо */
+}
+
+.nav__list {
+	display: flex;
+	gap: 30px; /* Расстояние между пунктами меню */
+}
+
+.nav__link:hover {
+	color: var(--color-primary);
+}
+
+/* --- BURGER BUTTON --- */
+.burger {
+	display: none; /* Скрываем на десктопе */
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	width: 30px;
+	height: 20px;
+	position: relative;
+	z-index: 100; /* Чтобы кнопка была поверх открытого меню */
+}
+
+.burger__line {
+	display: block;
+	width: 100%;
+	height: 2px;
+	background-color: var(--color-text-main);
+	position: absolute;
+	left: 0;
+	transition: var(--transition);
+}
+
+.burger__line:nth-child(1) {
+	top: 0;
+}
+.burger__line:nth-child(2) {
+	top: 50%;
+	transform: translateY(-50%);
+}
+.burger__line:nth-child(3) {
+	bottom: 0;
+}
+
+/* --- АДАПТИВ И МОБИЛЬНОЕ МЕНЮ --- */
+@media (max-width: 1160px) {
+	/* Меню теперь выезжает под хедером, а не перекрывает его */
+	.nav {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		background-color: var(--color-white);
+		z-index: 99; /* Хедер имеет z-index: 100, поэтому он будет сверху */
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start; /* Прижимаем список навигации к верху */
+		align-items: stretch; /* Растягиваем на всю ширину */
+		padding-top: 80px; /* Отступаем вниз, чтобы не перекрыть логотип */
+
+		transform: translateY(-100%);
+		opacity: 0;
+		visibility: hidden;
+		transition: var(--transition);
+	}
+
+	.nav.is-open {
+		transform: translateY(0);
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.nav__list {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0; /* Убираем старые отступы */
+		padding: 0 20px; /* Боковые отступы как у контейнера */
+	}
+
+	/* Добавляем линии-разделители под каждым пунктом (как на макете) */
+	.nav__list li {
+		border-bottom: 1px solid #eaeaea;
+	}
+
+	/* Стилизуем текст ссылок под макет */
+	.nav__link {
+		display: block;
+		padding: 20px 0;
+		font-size: 14px; /* Делаем шрифт мельче */
+		font-weight: 500;
+		text-transform: uppercase; /* Заглавные буквы */
+		text-align: left; /* По левому краю */
+	}
+
+	.burger {
+		display: block;
+		z-index: 101; /* Поверх всего */
+	}
+
+	/* --- АНИМАЦИЯ БУРГЕРА В КРЕСТИК В КВАДРАТЕ --- */
+	.burger.is-active {
+		width: 40px; /* Делаем кнопку квадратной */
+		height: 40px;
+		border: 1px solid #eaeaea; /* Добавляем серую рамку как на макете */
+		border-radius: 4px;
+	}
+
+	/* Центрируем линии крестика внутри квадрата */
+	.burger.is-active .burger__line {
+		width: 20px;
+		left: 50%;
+		margin-left: -10px;
+	}
+
+	.burger.is-active .burger__line:nth-child(1) {
+		top: 50%;
+		transform: translateY(-50%) rotate(45deg);
+	}
+	.burger.is-active .burger__line:nth-child(2) {
+		opacity: 0;
+	}
+	.burger.is-active .burger__line:nth-child(3) {
+		top: 50%;
+		bottom: auto; /* Сбрасываем привязку к низу */
+		transform: translateY(-50%) rotate(-45deg);
+	}
+}
+
+/* --- ТИПОГРАФИКА И ЗАГОЛОВКИ --- */
+.section-title {
+	font-size: 24px;
+	font-weight: 700;
+	text-transform: uppercase;
+	margin-bottom: 30px;
+}
+
+/* --- КНОПКИ (UI Kit) --- */
+.btn {
+	display: inline-block;
+	padding: 12px 30px;
+	font-family: var(--font-main);
+	font-size: 16px;
+	font-weight: 400;
+	text-align: center;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: var(--transition);
+}
+
+/* Состояния кнопок из 4-го скриншота */
+.btn--primary {
+	background-color: var(--color-text-main); /* Normal (темно-серый) */
+	color: var(--color-white);
+}
+
+.btn--primary:hover {
+	background-color: var(--color-primary); /* Hover (оранжевый) */
+}
+
+.btn--primary:disabled {
+	background-color: #e0e0e0; /* Disabled (светло-серый) */
+	color: #a0a0a0;
+	cursor: not-allowed;
+}
+
+.btn--dark {
+	background-color: #333333;
+	color: var(--color-white);
+}
+
+.btn--dark:hover {
+	background-color: var(--color-primary);
+}
+
+/* --- СЕКЦИЯ ОБОРУДОВАНИЯ --- */
+.equipment {
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+.equipment__grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr); /* 2 колонки на десктопе */
+	gap: 30px; /* Отступ между карточками */
+	margin-bottom: 40px;
+}
+
+.equipment__action {
+	text-align: center; /* Центрируем кнопку "Перейти в каталог" */
+}
+
+/* --- КАРТОЧКА ТОВАРА (ФИНАЛЬНАЯ) --- */
+.card {
+	display: flex;
+	align-items: center; /* Выравниваем по центру по вертикали */
+	/* gap: 30px;  <-- УДАЛЯЕМ gap, отступы зададим тексту напрямую */
+
+	border: 1px solid #eaeaea; /* Светлая рамка вокруг всей карточки */
+	border-radius: 8px; /* Скругляем углы карточки (как в макете) */
+	background-color: var(--color-white);
+	overflow: hidden; /* МАГИЯ: именно это свойство аккуратно "срежет" острые углы серого фона картинки слева! */
+}
+
+.card__img-wrap {
+	flex: 0 0 220px; /* Жестко фиксируем размер квадрата */
+	height: 220px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #f8f8f8; /* ВОЗВРАЩАЕМ серый фон только картинке! */
+}
+
+.card__img {
+	max-width: 100%; /* Чтобы картинка не прилипала к краям серого квадрата */
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.card__info {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 30px; /* Добавляем внутренние отступы для текста, так как у самой карточки их больше нет */
+}
+
+.card__title {
+	font-size: 18px;
+	font-weight: 500;
+	margin-bottom: 12px;
+}
+
+/* --- Статусы товаров --- */
+.card__status {
+	font-size: 14px;
+	color: var(--color-text-muted);
+	margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Общие стили для иконок статуса */
+.card__status::before {
+	content: "";
+	display: block;
+	width: 16px; /* Фиксированный размер для обеих иконок */
+	height: 16px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	flex-shrink: 0; /* Чтобы иконка не сплющивалась, если текст будет длинным */
+}
+
+/* Зеленая иконка с галочкой "В наличии" */
+.card__status--instock::before {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='12' fill='%236CC164'/%3E%3Cpath d='M7 12.5l3 3 7-7' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Оранжевая иконка с галочкой "Под заказ" */
+.card__status--order::before {
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23F37021'/%3E%3Cpath d='M7 12.5l3 3 7-7' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* --- АДАПТИВНОСТЬ СЕТКИ --- */
+@media (max-width: 1160px) {
+	.equipment__grid {
+		grid-template-columns: 1fr; /* На планшете переходим в 1 колонку */
+		gap: 20px;
+	}
+}
+
+/* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ (576px) --- */
+@media (max-width: 576px) {
+	/* Возвращаем сетку в 2 колонки, как на макете 576 */
+	.equipment__grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px; /* Делаем отступы между карточками поменьше */
+	}
+
+	/* Перестраиваем карточку из горизонтальной в вертикальную */
+	.card {
+		flex-direction: column; /* Картинка сверху, текст снизу */
+		align-items: stretch;
+	}
+
+	/* Серый бокс с картинкой теперь занимает всю ширину карточки */
+	.card__img-wrap {
+		flex: none; /* Сбрасываем жесткую ширину 220px */
+		width: 100%;
+		height: 150px; /* Компактная высота для картинки на мобилке */
+	}
+
+	/* Уменьшаем отступы внутри текстового блока */
+	.card__info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 30px;
+		flex-grow: 1; /* МАГИЯ 1: Заставляем текстовый блок занимать всё свободное пространство по высоте */
+		width: 100%; /* Чтобы блок не скукоживался */
+	}
+
+	/* МАГИЯ 2: Отталкиваем кнопку максимально вниз */
+	.card__info .btn {
+		margin-top: auto;
+	}
+	/* Уменьшаем шрифты, чтобы текст влезал в узкую колонку */
+	.card__title {
+		font-size: 13px;
+		margin-bottom: 8px;
+		line-height: 1.3;
+	}
+
+	.card__status {
+		font-size: 12px;
+		margin-bottom: 12px;
+	}
+
+	/* Кнопка тоже становится компактнее */
+	.btn {
+		padding: 8px 15px;
+		font-size: 13px;
+	}
+
+	/* --- Галерея "О компании" --- */
+	.about__gallery-thumbs {
+		gap: 8px;
+	}
+}
+
+/* --- СЕКЦИЯ: О КОМПАНИИ --- */
+.about {
+	padding-bottom: 80px; /* Отступ до футера */
+}
+
+.about__inner {
+	display: grid;
+	grid-template-columns: 1fr 1fr; /* Две равные колонки на десктопе */
+	gap: 40px; /* Расстояние между галереей и текстом */
+	align-items: start; /* Контент прижат к верху */
+}
+
+/* --- Галерея --- */
+.about__gallery {
+	display: flex;
+	flex-direction: column;
+	gap: 15px; /* Отступ между большой картинкой и мелкими */
+}
+
+.about__gallery-main {
+	width: 100%;
+	height: auto;
+	border-radius: 4px;
+	object-fit: cover;
+	display: block;
+}
+
+.about__gallery-thumbs {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr); /* 4 равные колонки для миниатюр */
+	gap: 15px; /* Расстояние между миниатюрами */
+}
+
+.about__thumb {
+	width: 100%;
+	object-fit: cover;
+	border-radius: 4px;
+	display: block;
+}
+
+/* --- Текстовый блок --- */
+.about__content {
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* Единый отступ между абзацами и списком */
+}
+
+.about__text {
+	font-size: 16px;
+	line-height: 1.5; /* Для читабельности длинного текста */
+	color: var(--color-text-main);
+}
+
+.about__text--bold {
+	font-weight: 700;
+}
+
+/* --- Маркированный список с кастомными галочками --- */
+.about__features {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.about__features li {
+	font-size: 16px;
+	line-height: 1.4;
+	position: relative;
+	padding-left: 36px; /* Место под иконку галочки */
+}
+
+/* Рисуем галочку прямо в CSS через Data URI */
+.about__features li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0px; /* Выравниваем по первой строке текста */
+	width: 24px;
+	height: 24px;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='12' fill='%23F37021'/%3E%3Cpath d='M7 12l3 3 7-7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+/* Кнопка "Подробнее" не должна растягиваться на всю ширину */
+.about__content .btn {
+	align-self: flex-start;
+	margin-top: 10px;
+}
+
+/* --- АДАПТИВНОСТЬ СЕКЦИИ --- */
+@media (max-width: 1160px) {
+	.about__inner {
+		grid-template-columns: 1fr; /* Перестраиваем в одну колонку */
+		gap: 30px;
+	}
+}
+
+@media (max-width: 576px) {
+	.about__gallery-thumbs {
+		gap: 8px; /* Уменьшаем отступы между миниатюрами на телефоне */
+	}
+
+	.about__features li {
+		font-size: 14px; /* Чуть уменьшаем текст списка */
+	}
+
+	.about__text {
+		font-size: 14px;
+	}
+}
